@@ -1,4 +1,5 @@
 # based on https://github.com/niclabs/htcondor-monitor implementation
+# corresponding Docker image is ttedesch/htcondor-exporter:latest
 
 import argparse
 import time
