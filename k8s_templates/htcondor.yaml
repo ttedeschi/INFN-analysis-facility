@@ -491,3 +491,8 @@ spec:
       app.kubernetes.io/name: client
 
   replicas: 1
+
+
+
+
+    
