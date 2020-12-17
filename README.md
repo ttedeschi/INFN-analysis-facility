@@ -47,4 +47,17 @@ After substituting <k8s master public ip> with the real value inside ```k8s_temp
 kubectl apply -f k8s_templates/htcondor.yaml
 ```
 
-
+### Setup htcondor client
+```
+kubectl exec schedd-pod-<pod name here> cat /etc/certs/ca.crt
+```
+Try remote submission:
+```
+echo "YOUR CA CERT" > /ca.crt
+export _condor_AUTH_SSL_CLIENT_CAFILE=/ca.crt
+export _condor_SEC_DEFAULT_AUTHENTICATION_METHODS=SCITOKENS
+export _condor_SCITOKENS_FILE=/tmp/token                          # token from CMS-IAM
+export _condor_COLLECTOR_HOST=<public IP>:30618
+export _condor_SCHEDD_HOST=schedd.condor.svc.cluster.local
+export _condor_TOOL_DEBUG=D_FULLDEBUG,D_SECURITY
+```
