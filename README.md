@@ -6,9 +6,28 @@ This repo contains all information and recipes to set up an Analysis Facility on
 ## Quick Start
 Setup oidc-agent for DODAS-IAM: https://dodas-ts.github.io/dodas-apps/setup-oidc/
 
+### Setup Jupyterhub
 ``` dodas create TOSCA_templates/jupyterhub.yaml ```
+After login:
+``` kubectl -n kube-system edit daemonset kube-flannel-ds-amd64``` putting ``` --iface-regex=172\.30\.X\.*``` into container args where x is the third component of k8s master internal IP
+```
+helm repo add dodas https://dodas-ts.github.io/helm_charts
+helm repo update
+```
+then subsitute in ```values/jupyterhub.yaml``` k8s master public IP and 
+```
+helm install  dodas/jupyterhub --values jupyterhub-value.yaml --generate-name --kubeconfig /etc/kubernetes/admin.conf
+```
+Then 
+```
+kubectl edit deployment hub
+```
+and substitute infn-cloud website with ```https://dodas-iam.cloud.cnaf.infn.it```
 
 ### Setup htcondor
+``` dodas create TOSCA_templates/htcondor.yaml ```
+
+After login:
 ```
 helm repo add longhorn https://charts.longhorn.io
 helm repo update
