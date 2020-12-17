@@ -292,7 +292,7 @@ spec:
       - name: hostcerts
         secret:
           secretName: example-com-tls
-          defaultMode: 256
+          defaultMode: 420
       - name: configd
         configMap:
           name: ccbconfigd
@@ -375,7 +375,7 @@ spec:
       - name: hostcerts
         secret:
           secretName: example-com-tls
-          defaultMode: 256
+          defaultMode: 420
       - name: mapfile
         configMap:
           name: mapfile
