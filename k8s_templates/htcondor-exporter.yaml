@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: htcondor-exporter-svc
+  labels:
+    app: htcondor-exporter
+spec:
+  type: NodePort
+  ports:
+  - port: 9118
+    protocol: TCP
+    targetPort: 9118
+  selector:
+    app: htcondor-exporter
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: htcondor-exporter
+  labels:
+    app: htcondor-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: htcondor-exporter
+  template:
+    metadata:
+      labels:
+        app: htcondor-exporter
+    spec:
+      containers:
+      - name: htcondor-exporter
+        image: ttedesch/htcondor-exporter:v2
+        #image: ttedesch/htcondor-exporter:updatedproxy-ok
+        env:
+        - name: _condor_SEC_CLIENT_AUTHENTICATION_METHODS
+          value: PASSWORD
+        - name:  _condor_SEC_DEFAULT_ENCRYPTION
+          value: REQUIRED
+        - name: _condor_SCHEDD_HOST
+          value: <k8s master public ip>
+        - name:  _condor_COLLECTOR_HOST
+          value: <k8s master public ip>
+        - name: _condor_SEC_PASSWORD_FILE
+          value: /etc/pwd/pool_password
+        ports:
+        - containerPort: 9118
+        command: ["python3", "/root/htcondor-monitor/exporter/exporter/CondorExporter.py"]
+        volumeMounts:
+          - name: clustersecret
+            mountPath: /etc/pwd
+      volumes:
+        - name: clustersecret
+          secret:
+            secretName: clustersecret
+            defaultMode: 256
