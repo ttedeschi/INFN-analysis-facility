@@ -1,0 +1,492 @@
+# define a CA to sign certificate
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: selfsigned-issuer
+  namespace: condor
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: example-com
+  namespace: condor
+spec:
+  # Secret names are always required.
+  secretName: example-com-tls
+  duration: 2160h # 90d
+  renewBefore: 360h # 15d
+  subject:
+    organizations:
+    - infn
+  # The use of the common name field has been deprecated since 2000 and is
+  # discouraged from being used.
+  commonName: 212.189.205.204.xip.io
+  isCA: True
+  privateKey:
+    algorithm: RSA
+    encoding: PKCS1
+    size: 2048
+  dnsNames:
+  - 212.189.205.204.xip.io
+  - master.condor.svc.cluster.local
+  - schedd.condor.svc.cluster.local
+  ipAddresses:
+    - 212.189.205.204
+  # Issuer references are always required.
+  issuerRef:
+    name: selfsigned-issuer
+    kind: Issuer
+    #name: letsencrypt-staging
+    #kind: ClusterIssuer
+---
+# Longhorn setup
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: longhorn-condor
+  namespace: condor
+provisioner: driver.longhorn.io
+allowVolumeExpansion: true
+parameters:
+  numberOfReplicas: "1"
+  staleReplicaTimeout: "2880" # 48 hours in minutes
+  fromBackup: ""
+---
+# cluster secret
+kind: Secret
+apiVersion: v1
+metadata:
+  name: clustersecret
+  namespace: condor
+stringData:
+  pool_password: dGVzdG1lcGxz
+type: Opaque
+---
+# condir mapfile
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mapfile
+  namespace: condor
+data:
+  condormapfile: |
+    SCITOKENS https://cms-auth.web.cern.ch/ cms@users.htcondor.org
+    PASSWORD (*.) condor
+    GSI (.*) anonymous
+---
+# longhorn spool
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: spool
+  namespace: condor
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn-condor
+  resources:
+    requests:
+      storage: 20Gi
+---
+# Source: htcondor/templates/htc-master-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wnconfigd
+  namespace: condor
+data:
+  01_DODAS_Custom: |
+    CONDOR_HOST = 212.189.205.204
+    DAEMON_LIST = MASTER, STARTD
+    COLLECTOR_NAME = DODAS-POOL
+    COLLECTOR_HOST = $(CONDOR_HOST):30618
+    DISCARD_SESSION_KEYRING_ON_STARTUP = False
+    ALLOW_WRITE = *
+    ALLOW_ADMINISTRATOR = $(CONDOR_HOST)
+    ALLOW_OWNER = $(FULL_HOSTNAME), $(ALLOW_ADMINISTRATOR)
+    ALLOW_NEGOTIATOR = *
+    ALLOW_NEGOTIATOR_SCHEDD = *
+    ALLOW_REMOTE_SUBMIT = True
+    ALLOW_ADVERTISE = *
+    ALLOW_DAEMON = *
+    HOSTALLOW_ADMINISTRATOR = $(CONDOR_HOST)
+    HOSTALLOW_OWNER = $(FULL_HOSTNAME), $(HOSTALLOW_ADMINISTRATOR)
+    SEC_DEFAULT_AUTHENTICATION = REQUIRED
+    SEC_DEFAULT_AUTHENTICATION_METHODS = PASSWORD,GSI
+    SEC_PASSWORD_FILE = /etc/pwd/pool_password
+    SEC_DEFAULT_INTEGRITY = REQUIRED
+    SEC_DEFAULT_ENCRYPTION = REQUIRED
+    CERTIFICATE_MAPFILE = /home/uwdir/condormapfile
+    GSI_DAEMON_DIRECTORY = /etc/grid-security
+    CCB_ADDRESS = $(COLLECTOR_HOST)
+---
+# Source: htcondor/templates/htc-master-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ccbconfigd
+  namespace: condor
+data:
+  01_DODAS_Custom: |
+    CONDOR_HOST = 212.189.205.204
+    DAEMON_LIST = COLLECTOR, MASTER, NEGOTIATOR
+    COLLECTOR_NAME = DODAS-POOL
+    COLLECTOR_HOST = $(CONDOR_HOST):30618
+    DISCARD_SESSION_KEYRING_ON_STARTUP = False
+    HIGHPORT = 31048
+    LOWPORT = 31024
+    ALLOW_WRITE = *
+    ALLOW_ADMINISTRATOR = $(CONDOR_HOST)
+    ALLOW_OWNER = $(FULL_HOSTNAME), $(ALLOW_ADMINISTRATOR)
+    ALLOW_NEGOTIATOR = *
+    ALLOW_NEGOTIATOR_SCHEDD = *
+    ALLOW_REMOTE_SUBMIT = True
+    ALLOW_ADVERTISE = *
+    ALLOW_DAEMON = *
+    HOSTALLOW_ADMINISTRATOR = $(CONDOR_HOST)
+    HOSTALLOW_OWNER = $(FULL_HOSTNAME), $(HOSTALLOW_ADMINISTRATOR)
+    SEC_DEFAULT_AUTHENTICATION = REQUIRED
+    SEC_DEFAULT_AUTHENTICATION_METHODS = PASSWORD,SCITOKENS,GSI
+    SEC_PASSWORD_FILE = /etc/pwd/pool_password
+    SEC_DEFAULT_INTEGRITY = REQUIRED
+    SEC_DEFAULT_ENCRYPTION = REQUIRED
+    AUTH_SSL_SERVER_CAFILE = /etc/certs/ca.crt
+    AUTH_SSL_SERVER_CERTFILE = /etc/certs/tls.crt
+    AUTH_SSL_SERVER_KEYFILE = /etc/certs/tls.key
+    CERTIFICATE_MAPFILE = /home/uwdir/condormapfile
+    GSI_DAEMON_PROXY = /tmp/proxy
+    COLLECTOR_DEBUG=D_FULLDEBUG,D_SECURITY,D_NETWORK
+    TOOL_DEBUG=D_FULLDEBUG,D_SECURITY
+    TCP_FORWARDING_HOST = 212.189.205.204.xip.io
+---
+# Master svc
+kind: Service
+apiVersion: v1
+metadata:
+  name: master
+  namespace: condor
+spec:
+  type: NodePort
+  selector:
+    app.kubernetes.io/name: master
+  #clusterIP: None
+  ports:
+  - protocol: TCP
+    name: collector
+    port: 30618
+    targetPort: 30618
+    nodePort: 30618
+---
+# Source: htcondor/templates/htc-schedd-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scheddconfigd
+  namespace: condor
+data:
+  01_DODAS_Custom: |
+    CONDOR_HOST = 212.189.205.204
+    DAEMON_LIST = MASTER, SCHEDD
+    COLLECTOR_NAME = DODAS-POOL
+    COLLECTOR_HOST = $(CONDOR_HOST):30618
+    DISCARD_SESSION_KEYRING_ON_STARTUP = False
+    HIGHPORT = 31048
+    LOWPORT = 31024
+    ALLOW_WRITE = *
+    ALLOW_ADMINISTRATOR = $(CONDOR_HOST)
+    ALLOW_OWNER = $(FULL_HOSTNAME), $(ALLOW_ADMINISTRATOR)
+    ALLOW_NEGOTIATOR = *
+    ALLOW_NEGOTIATOR_SCHEDD = *
+    ALLOW_REMOTE_SUBMIT = True
+    ALLOW_ADVERTISE = *
+    ALLOW_DAEMON = *
+    HOSTALLOW_ADMINISTRATOR = $(CONDOR_HOST)
+    HOSTALLOW_OWNER = $(FULL_HOSTNAME), $(HOSTALLOW_ADMINISTRATOR)
+    SEC_DEFAULT_AUTHENTICATION = REQUIRED
+    SEC_DEFAULT_AUTHENTICATION_METHODS = PASSWORD,SCITOKENS,GSI
+    SEC_DEFAULT_INTEGRITY = REQUIRED
+    SEC_DEFAULT_ENCRYPTION = REQUIRED
+    CERTIFICATE_MAPFILE = /home/uwdir/condormapfile
+    SEC_PASSWORD_FILE = /etc/pwd/pool_password
+    GSI_DAEMON_DIRECTORY = /etc/grid-security
+    NETWORK_HOSTNAME = schedd.condor.svc.cluster.local
+    QUEUE_SUPER_USER_MAY_IMPERSONATE = .*
+    QUEUE_SUPER_USERS = condor, cms@users.htcondor.org
+    QUEUE_ALL_USERS_TRUSTED = True
+    AUTH_SSL_SERVER_CAFILE = /etc/certs/ca.crt
+    AUTH_SSL_SERVER_CERTFILE = /etc/certs/tls.crt
+    AUTH_SSL_SERVER_KEYFILE = /etc/certs/tls.key
+    SCHEDD_AUDIT_LOG = $(LOG)/AuditLog
+    SCHEDD_DEBUG=D_FULLDEBUG,D_SECURITY,D_NETWORK
+    TOOL_DEBUG=D_FULLDEBUG,D_SECURITY
+    MAX_SCHEDD_AUDIT_LOG = 1d
+    MAX_NUM_SCHEDD_AUDIT_LOG = 90
+    SHARED_PORT_ARGS = -p 31618
+    PRIVATE_NETWORK_NAME = schedd.condor.svc.cluster.local
+    TCP_FORWARDING_HOST = 212.189.205.204.xip.io
+---
+# Schedd service
+kind: Service
+apiVersion: v1
+metadata:
+  name: schedd
+  namespace: condor
+spec:
+ type: NodePort
+ selector:
+    app.kubernetes.io/name: schedd
+ #clusterIP: None
+ ports:
+  - protocol: TCP
+    name: schedd
+    targetPort: 31618
+    port: 31618
+    nodePort: 31618
+
+---
+# Source: htcondor/templates/htc-master-pod.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ccb-pod
+  namespace: condor
+  labels:
+    app.kubernetes.io/name: master
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: master
+    spec:
+      priorityClassName: system-node-critical
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                - master
+            topologyKey: kubernetes.io/hostname
+      #hostNetwork: true
+      containers:
+      - name: ccb
+        imagePullPolicy: IfNotPresent
+        image: "htcondor/cm:8.9.9-el7"
+        volumeMounts:
+          - mountPath: "/etc/condor/config.d"
+            name: configd
+          - name: clustersecret
+            mountPath: /etc/pwd
+          - name: mapfile
+            mountPath: /home/uwdir/
+          - name: hostcerts
+            mountPath: /etc/certs
+      nodeSelector:
+        condor: ccb
+      volumes:
+      - name: hostcerts
+        secret:
+          secretName: example-com-tls
+          defaultMode: 256
+      - name: configd
+        configMap:
+          name: ccbconfigd
+      - name: clustersecret
+        secret:
+          secretName: clustersecret
+          defaultMode: 256
+      - name: mapfile
+        configMap:
+          name: mapfile
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: master
+
+  replicas: 1
+---
+# Source: htcondor/templates/htc-schedd-pod.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: schedd-pod
+  namespace: condor
+  labels:
+    app.kubernetes.io/name: schedd
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: schedd
+    spec:
+      priorityClassName: system-node-critical
+      #hostNetwork: true
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                - schedd
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - name: schedd
+        resources:
+          requests:
+            memory: "500M"
+            cpu: "100m"
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          capabilities:
+            add:
+            - CAP_SYS_ADMIN
+          privileged: true
+        image: "htcondor/submit:8.9.9-el7"
+        volumeMounts:
+          - mountPath: "/etc/condor/config.d"
+            name: configd
+          #- mountPath: "/etc/ca"
+          #  name: cafile
+          - name: clustersecret
+            mountPath: /etc/pwd
+          - name: mapfile
+            mountPath: /home/uwdir/
+          - name: hostcerts
+            mountPath: /etc/certs
+      nodeSelector:
+        condor: schedd
+      volumes:
+      - name: configd
+        configMap:
+          name: scheddconfigd
+      #- name: cafile
+      #  configMap:
+      #    name: cafile
+      - name: clustersecret
+        secret:
+          secretName: clustersecret
+          defaultMode: 256
+      - name: hostcerts
+        secret:
+          secretName: example-com-tls
+          defaultMode: 256
+      - name: mapfile
+        configMap:
+          name: mapfile
+      - name: spool
+        persistentVolumeClaim:
+          claimName: spool
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: schedd
+
+  replicas: 1
+---
+# Source: htcondor/templates/htc-master-pod.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wn-pod
+  namespace: condor
+  labels:
+    app.kubernetes.io/name: wn
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: wn
+    spec:
+      priorityClassName: system-node-critical
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: NotIn
+                values:
+                - master
+                - schedd
+                - wn
+            topologyKey: kubernetes.io/hostname
+      #hostNetwork: true
+      containers:
+      - name: wn
+        imagePullPolicy: IfNotPresent
+        image: "htcondor/execute:8.9.9-el7"
+        volumeMounts:
+          - mountPath: "/etc/condor/config.d"
+            name: configd
+          - name: clustersecret
+            mountPath: /etc/pwd
+          - name: mapfile
+            mountPath: /home/uwdir/
+      volumes:
+      - name: configd
+        configMap:
+          name: wnconfigd
+      - name: clustersecret
+        secret:
+          secretName: clustersecret
+          defaultMode: 256
+      - name: mapfile
+        configMap:
+          name: mapfile
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: wn
+
+  replicas: 1
+---
+# Source: htcondor/templates/htc-master-pod.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-pod
+  namespace: condor
+  labels:
+    app.kubernetes.io/name: client
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: client
+    spec:
+      priorityClassName: system-node-critical
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: NotIn
+                values:
+                - master
+                - schedd
+            topologyKey: kubernetes.io/hostname
+      #hostNetwork: true
+      containers:
+      - name: client
+        imagePullPolicy: IfNotPresent
+        image: "htcondor/execute:8.9.9-el7"
+        command:
+          - sleep
+          - infinity
+        volumeMounts:
+          - name: hostcerts
+            mountPath: /etc/certs
+      volumes:
+      - name: hostcerts
+        secret:
+          secretName: example-com-tls
+          #defaultMode: 256
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: client
+
+  replicas: 1
