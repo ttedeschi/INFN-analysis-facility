@@ -25,7 +25,9 @@ kubectl edit deployment hub
 and substitute infn-cloud website with ```https://dodas-iam.cloud.cnaf.infn.it```
 
 ### Setup htcondor
-``` dodas create TOSCA_templates/htcondor.yaml ```
+``` 
+dodas create TOSCA_templates/htcondor.yaml
+```
 
 After login:
 ```
