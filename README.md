@@ -7,7 +7,9 @@ This repo contains all information and recipes to set up an Analysis Facility on
 Setup oidc-agent for DODAS-IAM: https://dodas-ts.github.io/dodas-apps/setup-oidc/
 
 ### Setup Jupyterhub
-``` dodas create TOSCA_templates/jupyterhub.yaml ```
+``` 
+dodas create TOSCA_templates/jupyterhub.yaml 
+```
 After login:
 ``` kubectl -n kube-system edit daemonset kube-flannel-ds-amd64``` putting ``` --iface-regex=172\.30\.X\.*``` into container args where x is the third component of k8s master internal IP
 ```
