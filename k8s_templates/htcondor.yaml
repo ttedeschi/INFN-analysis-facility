@@ -29,11 +29,11 @@ spec:
     encoding: PKCS1
     size: 2048
   dnsNames:
-  - 212.189.205.204.xip.io
+  - <k8s master public IP>.xip.io
   - master.condor.svc.cluster.local
   - schedd.condor.svc.cluster.local
   ipAddresses:
-    - 212.189.205.204
+    - <k8s master public IP>
   # Issuer references are always required.
   issuerRef:
     name: selfsigned-issuer
@@ -98,7 +98,7 @@ metadata:
   namespace: condor
 data:
   01_DODAS_Custom: |
-    CONDOR_HOST = 212.189.205.204
+    CONDOR_HOST = <k8s master public IP>
     DAEMON_LIST = MASTER, STARTD
     COLLECTOR_NAME = DODAS-POOL
     COLLECTOR_HOST = $(CONDOR_HOST):30618
@@ -130,7 +130,7 @@ metadata:
   namespace: condor
 data:
   01_DODAS_Custom: |
-    CONDOR_HOST = 212.189.205.204
+    CONDOR_HOST = <k8s master public IP>
     DAEMON_LIST = COLLECTOR, MASTER, NEGOTIATOR
     COLLECTOR_NAME = DODAS-POOL
     COLLECTOR_HOST = $(CONDOR_HOST):30618
@@ -159,7 +159,8 @@ data:
     GSI_DAEMON_PROXY = /tmp/proxy
     COLLECTOR_DEBUG=D_FULLDEBUG,D_SECURITY,D_NETWORK
     TOOL_DEBUG=D_FULLDEBUG,D_SECURITY
-    TCP_FORWARDING_HOST = 212.189.205.204.xip.io
+    SHARED_PORT_ARGS = -p 30618
+    TCP_FORWARDING_HOST = <k8s master public IP>.xip.io
 ---
 # Master svc
 kind: Service
@@ -187,7 +188,7 @@ metadata:
   namespace: condor
 data:
   01_DODAS_Custom: |
-    CONDOR_HOST = 212.189.205.204
+    CONDOR_HOST = <k8s master public IP>
     DAEMON_LIST = MASTER, SCHEDD
     COLLECTOR_NAME = DODAS-POOL
     COLLECTOR_HOST = $(CONDOR_HOST):30618
@@ -225,7 +226,7 @@ data:
     MAX_NUM_SCHEDD_AUDIT_LOG = 90
     SHARED_PORT_ARGS = -p 31618
     PRIVATE_NETWORK_NAME = schedd.condor.svc.cluster.local
-    TCP_FORWARDING_HOST = 212.189.205.204.xip.io
+    TCP_FORWARDING_HOST = <k8s master public IP>.xip.io
 ---
 # Schedd service
 kind: Service
