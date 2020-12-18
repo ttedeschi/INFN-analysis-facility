@@ -61,3 +61,14 @@ export _condor_COLLECTOR_HOST=<public IP>:30618
 export _condor_SCHEDD_HOST=schedd.condor.svc.cluster.local
 export _condor_TOOL_DEBUG=D_FULLDEBUG,D_SECURITY
 ```
+
+### Machine Learning
+From Root to Pandas/Numpy
+```
+import uproot
+file = uproot.open("example.root")
+tree = file["events"]
+df = tree.arrays(["var1","var2"], library="pd")               # Pandas DataFrame
+np_dict = tree.arrays(["lepSF","lepDown"], library="np")      # Dictionary of Numpy arrays 
+```
+
