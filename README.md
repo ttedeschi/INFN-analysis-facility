@@ -57,7 +57,7 @@ echo "YOUR CA CERT" > /ca.crt
 export _condor_AUTH_SSL_CLIENT_CAFILE=/ca.crt
 export _condor_SEC_DEFAULT_AUTHENTICATION_METHODS=SCITOKENS
 export _condor_SCITOKENS_FILE=/tmp/token                          # token from CMS-IAM
-export _condor_COLLECTOR_HOST=<public IP>:30618
+export _condor_COLLECTOR_HOST=<public IP>.xip.io:30618
 export _condor_SCHEDD_HOST=schedd.condor.svc.cluster.local
 export _condor_TOOL_DEBUG=D_FULLDEBUG,D_SECURITY
 ```
