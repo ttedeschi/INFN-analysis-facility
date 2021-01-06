@@ -1,5 +1,5 @@
 # INFN-analysis-facility
-This repo contains all information and recipes to set up an Analysis Facility on INFN infrastructure. The scheme of the Analysis Facility is the following: two Kubernetes clusters deployed via DODAS, one for Jupyterhub deployment and the second one for HTCondor batch system. TJupyterhub uses 
+This repo contains all information and recipes to set up an Analysis Facility on INFN infrastructure. The scheme of the Analysis Facility is the following: two Kubernetes clusters deployed via DODAS, one for Jupyterhub deployment and the second one for HTCondor batch system.
 
 ![alt text](AnalysisFacility_OSG_2.png)
 
