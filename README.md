@@ -1,5 +1,5 @@
 # INFN-analysis-facility
-This repo contains all information and recipes to set up an Analysis Facility on INFN infrastructure. The scheme of the Analysis Facility is the following
+This repo contains all information and recipes to set up an Analysis Facility on INFN infrastructure. The scheme of the Analysis Facility is the following: two Kubernetes clusters deployed via DODAS, one for Jupyterhub deployment and the second one for HTCondor batch system. TJupyterhub uses 
 
 ![alt text](AnalysisFacility_OSG_2.png)
 
@@ -7,6 +7,7 @@ This repo contains all information and recipes to set up an Analysis Facility on
 Setup oidc-agent for DODAS-IAM: https://dodas-ts.github.io/dodas-apps/setup-oidc/
 
 ### Setup Jupyterhub
+
 ``` 
 dodas create TOSCA_templates/jupyterhub.yaml 
 ```
@@ -25,6 +26,8 @@ Then
 kubectl edit deployment hub
 ```
 and substitute infn-cloud website with ```https://dodas-iam.cloud.cnaf.infn.it```
+
+This way the Jupyterhub uses DODAS-iam authentication to give access to a newly created jupyter notebook instance.
 
 ### Setup htcondor
 ``` 
