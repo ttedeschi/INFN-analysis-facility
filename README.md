@@ -46,8 +46,11 @@ After substituting <k8s master public ip> with the real value inside ```k8s_temp
 ```
 kubectl apply -f k8s_templates/htcondor.yaml
 ```
+HTCondor components use PASSWORD authentication method using a shared secret across the cluster.
 
 ### Setup htcondor client
+
+HTCondor clients outside the cluster use a SCITOKENS authentication method, using CMS-IAM token.
 ```
 kubectl exec schedd-pod-<pod name here> cat /etc/certs/ca.crt
 ```
