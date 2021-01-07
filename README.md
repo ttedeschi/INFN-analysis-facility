@@ -1,10 +1,29 @@
 # INFN-analysis-facility
-This repo contains all information and recipes to set up an Analysis Facility on INFN infrastructure. The scheme of the Analysis Facility is the following: two Kubernetes clusters deployed via DODAS, one for Jupyterhub deployment and the second one for HTCondor batch system.
+This repo contains all information and recipes to set up an Analysis Facility on INFN infrastructure. The scheme of the Analysis Facility is the following: two Kubernetes clusters deployed via DODAS, one for Jupyterhub deployment and the second one for HTCondor batch system. 
 
 ![alt text](AnalysisFacility_OSG_2.png)
 
-## Quick Start
-Setup oidc-agent for DODAS-IAM: https://dodas-ts.github.io/dodas-apps/setup-oidc/
+## User Guide
+As a user of the analysis facility, you would like to both get access directly to the HTCondor cluster and to a Jupyter Notebook (which in turn can be used to submit jobs to HTCondor via Dask).
+
+### Access to Jupyter Notebook
+In order to get a Jupyter Notebook, you first have to apply for a Dodas-IAM account at https://dodas-iam.cloud.cnaf.infn.it/. Once you receive notification of account creation, you are good to go.
+
+Go to http://90.147.75.37:30888/ and authenticate via Dodas-IAM, choosing the resources that will be assigned to your notebook. Once you have done this, you will be able to run multiple Jupyter notebooks, where you can perform your analysis or that you can use to submit jobs to HTCondor.
+
+### Direct access to HTCondor via client
+In order to get access directly to the HTCondor cluster, you should first apply for an account at CMS-IAM https://cms-auth.web.cern.ch/ and setup oidc-agent for cms (following these steps https://dodas-ts.github.io/dodas-apps/setup-oidc/ subsituting dodas with cms links and names). Once done this, create an HTCondor user using ```htcondor/submit:8.9.9-el7``` image. Ask your cluster admin for a CA certificate and write it into ```/ca.cert``` file. Besides, ```oidc-token cms``` to get a valid token and put it into ```/tmp/token``` file. Once you have done these two steps, set these environment variables:
+```
+export _condor_AUTH_SSL_CLIENT_CAFILE=/ca.crt
+export _condor_SEC_DEFAULT_AUTHENTICATION_METHODS=SCITOKENS
+export _condor_SCITOKENS_FILE=/tmp/token                          # token from CMS-IAM
+export _condor_COLLECTOR_HOST=212.189.205.205.xip.io:30618
+export _condor_SCHEDD_HOST=schedd.condor.svc.cluster.local
+export _condor_TOOL_DEBUG=D_FULLDEBUG,D_SECURITY
+```
+Now you are good to go!
+
+## Admin guide 
 
 ### Setup Jupyterhub
 
@@ -51,22 +70,13 @@ kubectl apply -f k8s_templates/htcondor.yaml
 ```
 HTCondor components use PASSWORD authentication method using a shared secret across the cluster.
 
-### Setup htcondor client
+### Get CA certs for clients
 
-HTCondor clients outside the cluster use a SCITOKENS authentication method, using CMS-IAM token.
+HTCondor clients outside the cluster use a SCITOKENS authentication method, using CMS-IAM token. CA certs can be retrieved with
 ```
 kubectl exec schedd-pod-<pod name here> cat /etc/certs/ca.crt
 ```
-Try remote submission:
-```
-echo "YOUR CA CERT" > /ca.crt
-export _condor_AUTH_SSL_CLIENT_CAFILE=/ca.crt
-export _condor_SEC_DEFAULT_AUTHENTICATION_METHODS=SCITOKENS
-export _condor_SCITOKENS_FILE=/tmp/token                          # token from CMS-IAM
-export _condor_COLLECTOR_HOST=<public IP>.xip.io:30618
-export _condor_SCHEDD_HOST=schedd.condor.svc.cluster.local
-export _condor_TOOL_DEBUG=D_FULLDEBUG,D_SECURITY
-```
+
 
 ### Machine Learning
 From Root to Pandas/Numpy
