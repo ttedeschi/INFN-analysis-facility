@@ -1,8 +1,7 @@
 ---
-layout: template
+layout: page
 title: "User Guide"
 permalink: /user-guide/
-theme: jekyll-theme-slate
 ---
 
 Test
