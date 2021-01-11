@@ -74,8 +74,8 @@ Enter encryption password for account configuration 'cms':
 That's it. Now you can retrieve you valid access token by:
 ```
 oidc-token cms
-```
 eyJraWQiOiJyc2ExIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJlZjVmMTgzZC00ZDllLTRmMmEtOWRjNi0zZjEzNTlmMTliMzUiLCJpc3MiOiJodHRwczpcL1wvaWFtLWRlbW8uY2xvdWQuY25hZi5pbmZuLml0XC8iLCJuYW1lIjoiRGllZ28gQ2lhbmdvdHRpbmk....
+```
 To get the tool available on all you sessions just include in your bash profile:
 
 ```
