@@ -14,7 +14,7 @@ In the remainder of the documentation, we will provide two different user guides
 As a user of the analysis facility, you would like to both get access directly to the HTCondor cluster and to a Jupyter Notebook (which in turn can be used to submit jobs to HTCondor via Dask).
 
 ### Requirements
-This guide only requires a web access via browser (for Jupyter Notebook) and a Docker Desktop installation (for HTCondor standalone client). In order to get access directly to the HTCondor cluster, you should first apply for an account at CMS-IAM https://cms-auth.web.cern.ch/ and setup oidc-agent for cms (link to oidc-agent cms guide)
+This guide only requires a web access via browser (for Jupyter Notebook) and a Docker Desktop installation (for HTCondor standalone client). In order to get access directly to the HTCondor cluster, you should first apply for an account at CMS-IAM https://cms-auth.web.cern.ch/ and setup oidc-agent for cms (https://github.com/ttedeschi/INFN-analysis-facility/blob/main/oidc-token-cms.md)
 
 ### Access to Jupyter Notebook
 In order to get a Jupyter Notebook, you first have to apply for a Dodas-IAM account at https://dodas-iam.cloud.cnaf.infn.it/. Once you receive notification of account creation, you are good to go.
