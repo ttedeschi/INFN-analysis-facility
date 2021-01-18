@@ -25,9 +25,6 @@ RUN fetch-crl -q
 
 WORKDIR /root
 
-##RUN echo 'source /usr/local/bin/thisroot.sh' | cat - /start.sh > temp && mv temp /start.sh
-##RUN echo 'source /usr/local/bin/NanoAODTools/standalone/env_standalone.sh' | cat - /start.sh > temp && mv temp /start.sh
-##RUN echo 'bash /usr/local/bin/NanoAODTools/standalone/env_standalone.sh build' | cat - /start.sh > temp && mv temp /start.sh
 RUN echo 'bash /usr/local/bin/NanoAODTools/standalone/env_standalone.sh build' > /etc/profile.d/nanoaodtools.sh
 RUN echo 'source /usr/local/bin/NanoAODTools/standalone/env_standalone.sh' >> /etc/profile.d/nanoaodtools.sh
 RUN echo 'source /usr/local/bin/thisroot.sh' >> /etc/profile.d/nanoaodtools.sh
