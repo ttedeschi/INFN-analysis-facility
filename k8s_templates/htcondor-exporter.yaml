@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: htcondor-exporter-svc
+  namespace: condor
   labels:
     app: htcondor-exporter
 spec:
@@ -17,6 +18,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: condor
   name: htcondor-exporter
   labels:
     app: htcondor-exporter
@@ -32,7 +34,7 @@ spec:
     spec:
       containers:
       - name: htcondor-exporter
-        image: ttedesch/htcondor-exporter:v2
+        image: ttedesch/htcondor-exporter:v3
         #image: ttedesch/htcondor-exporter:updatedproxy-ok
         env:
         - name: _condor_SEC_CLIENT_AUTHENTICATION_METHODS
@@ -47,7 +49,7 @@ spec:
           value: /etc/pwd/pool_password
         ports:
         - containerPort: 9118
-        command: ["python3", "/root/htcondor-monitor/exporter/exporter/CondorExporter.py"]
+        command: ["python3", "/root/CondorExporter.py"]
         volumeMounts:
           - name: clustersecret
             mountPath: /etc/pwd
