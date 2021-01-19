@@ -1,0 +1,16 @@
+Proxy_filename          = proxy
+Proxy_path              = /home/test/$(Proxy_filename)
+universe                = vanilla
+x509userproxy           = $(Proxy_path)
+use_x509userproxy       = true
+should_transfer_files   = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files    = $(Proxy_path), TH2F_FakeRatio_ele.root, TH2F_FakeRatio_mu.root, samples/samples.py, skimtree_utils_ssWW_wFakes.py, CutsAndValues_bu.py, __init__.py, tree_skimmer_ssWW_wFakes.py
++JobFlavour             = "workday"
+executable              = executable.sh
+arguments               = WJetsHT2500toInf_2017 35 root://cms-xrd-global.cern.ch//store/user/apiccine/VBS/WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsHT2500toInf_2017/201210_105702/0000/tree_hadd_36.root remote
+output                  = WJetsHT2500toInf_2017_VTLVL_part35.out
+error                   = WJetsHT2500toInf_2017_VTLVL_part35.err
+log                     = WJetsHT2500toInf_2017_VTLVL_part35.log
++OWNER                  = "condor"
+queue
