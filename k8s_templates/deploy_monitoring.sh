@@ -1,4 +1,4 @@
-kubectl apply -f exporter.yaml
+kubectl apply -f htcondor-exporter.yaml
 kubectl create namespace monitoring
 kubectl create configmap prometheus-example-cm --from-file configs/prometheus.yml -n monitoring
 kubectl apply -f manifests_no_configs/prometheus.yaml
