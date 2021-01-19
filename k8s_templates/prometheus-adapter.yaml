@@ -171,7 +171,7 @@ spec:
         - --prometheus-url=http://prometheus-service.monitoring.svc:8080/
         - --metrics-relist-interval=1m
         - --v=6
-        - --config=/etc/adapter/prometheus_adapter.yml
+        - --config=/etc/adapter/prometheus-adapter.yml
         ports:
         - containerPort: 6443
           name: https
