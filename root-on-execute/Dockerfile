@@ -28,6 +28,8 @@ WORKDIR /root
 RUN echo 'bash /usr/local/bin/NanoAODTools/standalone/env_standalone.sh build' > /etc/profile.d/nanoaodtools.sh
 RUN echo 'source /usr/local/bin/NanoAODTools/standalone/env_standalone.sh' >> /etc/profile.d/nanoaodtools.sh
 RUN echo 'source /usr/local/bin/thisroot.sh' >> /etc/profile.d/nanoaodtools.sh
+RUN chmod -R 777 /usr/local/bin/NanoAODTools
+
 ENV PYTHONPATH=/usr/local/lib
 ENV LD_LIBRARY_PATH=/usr/local/lib
 
