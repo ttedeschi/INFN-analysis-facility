@@ -1,0 +1,27 @@
+# Longhorn setup
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: longhorn-condor
+  namespace: condor
+provisioner: driver.longhorn.io
+allowVolumeExpansion: true
+parameters:
+  numberOfReplicas: "1"
+  staleReplicaTimeout: "2880" # 48 hours in minutes
+  fromBackup: ""
+
+---
+# longhorn spool
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: spool
+  namespace: condor
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn-condor
+  resources:
+    requests:
+      storage: {{ .Values.storage }}

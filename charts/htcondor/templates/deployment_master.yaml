@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ccb-pod
+  namespace: condor
+  labels:
+    app.kubernetes.io/name: master
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: master
+    spec:
+      priorityClassName: system-node-critical
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                - master
+            topologyKey: kubernetes.io/hostname
+      #hostNetwork: true
+      containers:
+      - name: ccb
+        imagePullPolicy: {{ .Values.image_ccb.pullPolicy }}
+        image: "{{ .Values.image_ccb.repository }}:{{ .Values.image_ccb.tag | default .Chart.AppVersion }}"
+        volumeMounts:
+          - mountPath: "/etc/condor/config.d"
+            name: configd
+          - name: clustersecret
+            mountPath: /etc/pwd
+          - name: mapfile
+            mountPath: /home/uwdir/
+          - name: hostcerts
+            mountPath: /etc/certs
+      nodeSelector:
+        condor: ccb
+      {{- with .Values.affinity_ccb }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+      - name: hostcerts
+        secret:
+          secretName: example-com-tls
+          defaultMode: 420
+      - name: configd
+        configMap:
+          name: ccbconfigd
+      - name: clustersecret
+        secret:
+          secretName: clustersecret
+          defaultMode: 256
+      - name: mapfile
+        configMap:
+          name: mapfile
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: master
+  
+
+  replicas: 1

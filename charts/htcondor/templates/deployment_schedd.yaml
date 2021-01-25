@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: schedd-pod
+  namespace: condor
+  labels:
+    app.kubernetes.io/name: schedd
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: schedd
+    spec:
+      priorityClassName: system-node-critical
+      #hostNetwork: true
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                - schedd
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - name: schedd
+        resources:
+          requests:
+            memory: resources.requestsSchedd.memory
+            cpu: resources.requestsSchedd.cpu
+        imagePullPolicy: {{ .Values.imageSchedd.pullPolicy }}
+        securityContext:
+          capabilities:
+            add:
+            - CAP_SYS_ADMIN
+          privileged: true
+        image: "{{ .Values.imageSchedd.repository }}:{{ .Values.imageSchedd.tag | default .Chart.AppVersion }}"
+        volumeMounts:
+          - mountPath: "/etc/condor/config.d"
+            name: configd
+          #- mountPath: "/etc/ca"
+          #  name: cafile
+          - name: clustersecret
+            mountPath: /etc/pwd
+          - name: mapfile
+            mountPath: /home/uwdir/
+          - name: hostcerts
+            mountPath: /etc/certs
+      nodeSelector:
+        condor: schedd
+      {{- with .Values.affinitySchedd }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+      - name: configd
+        configMap:
+          name: scheddconfigd
+      #- name: cafile
+      #  configMap:
+      #    name: cafile
+      - name: clustersecret
+        secret:
+          secretName: clustersecret
+          defaultMode: 256
+      - name: hostcerts
+        secret:
+          secretName: example-com-tls
+          defaultMode: 420
+      - name: mapfile
+        configMap:
+          name: mapfile
+      - name: spool
+        persistentVolumeClaim:
+          claimName: spool
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: schedd
+
+  replicas: 1

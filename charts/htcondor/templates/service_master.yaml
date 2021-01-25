@@ -1,0 +1,15 @@
+apiVersion: v1 
+kind: Service 
+metadata:
+  name: master
+  namespace: {{ include "htcondor.namespace" . }} 
+spec:
+  type: NodePort
+  ports:
+    - port: {{ .Values.serviceCcb.port }}
+      targetPort: {{ .Values.serviceCcb.port }}
+      nodePort: {{ .Values.serviceCcb.port }}
+      protocol: TCP
+      name: collector
+  selector:
+    app.kubernetes.io/name: master
