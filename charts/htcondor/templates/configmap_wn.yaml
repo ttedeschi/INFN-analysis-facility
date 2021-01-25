@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: wnconfigd
-  namespace: condor
+  namespace: {{ .Values.namespace }}
 data:
   01_DODAS_Custom: |
     CONDOR_HOST = {{ .Values.masterPublicIp }}

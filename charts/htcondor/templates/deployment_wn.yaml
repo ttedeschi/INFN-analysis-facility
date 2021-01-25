@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: wn-pod
-  namespace: condor
+  namespace: {{ .Values.namespace }}
   labels:
     app.kubernetes.io/name: wn
 spec:

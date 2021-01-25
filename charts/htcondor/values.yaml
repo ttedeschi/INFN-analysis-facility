@@ -5,6 +5,7 @@
 masterPublicIp: 212.202.201.205
 replicaCountWn: 1
 storage: 20Gi
+namespace: condor
 
 imageCcb:
   repository: htcondor/cm
