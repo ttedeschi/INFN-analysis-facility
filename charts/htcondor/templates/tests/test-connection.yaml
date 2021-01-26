@@ -11,5 +11,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "htcondor.fullname" . }}:{{ .Values.service.port }}']
+      args: ['{{ include "htcondor.fullname" . }}:{{ .Values.serviceSchedd.port }}']
   restartPolicy: Never

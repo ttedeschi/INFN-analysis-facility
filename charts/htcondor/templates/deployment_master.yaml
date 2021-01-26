@@ -25,8 +25,8 @@ spec:
       #hostNetwork: true
       containers:
       - name: ccb
-        imagePullPolicy: {{ .Values.image_ccb.pullPolicy }}
-        image: "{{ .Values.image_ccb.repository }}:{{ .Values.image_ccb.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.imageCcb.pullPolicy }}
+        image: "{{ .Values.imageCcb.repository }}:{{ .Values.imageCcb.tag | default .Chart.AppVersion }}"
         volumeMounts:
           - mountPath: "/etc/condor/config.d"
             name: configd
