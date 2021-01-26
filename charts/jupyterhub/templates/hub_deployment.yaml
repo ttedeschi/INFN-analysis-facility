@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hub
+  labels:
+    app: "hub"
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: "hub"
+  template:
+    metadata:
+      labels:
+        app: "hub"
+    spec:
+      containers:
+        - name: jupyter
+          imagePullPolicy: Always
+          command: ["jupyterhub", "--port", "8888", "--config", "./.init/jupyterhub_config.py"]
+          env:
+            - name: OAUTH_CALLBACK_URL
+              value: "http://{{ .Values.hub.host }}:{{ .Values.hub.port }}/hub/oauth_callback"
+            - name: OAUTH_ENDPOINT
+              value: "{{ .Values.iam.endpoint }}"
+            - name: S3_ENDPOINT
+              value: "{{ .Values.s3.endpoint }}"
+            - name: S3_BUCKET
+              value: "{{ .Values.s3.bucket }}"
+          image: "{{ .Values.hub.image }}"
+          ports:
+          - containerPort: 8888
