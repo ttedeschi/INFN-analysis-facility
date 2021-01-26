@@ -3,7 +3,7 @@ entries:
   htcondor:
   - apiVersion: v2
     appVersion: "1"
-    created: "2021-01-26T16:59:22.5120293+01:00"
+    created: "2021-01-26T17:20:49.9471263+01:00"
     description: A Helm chart for the deployment of HTCondor with PASSWORD authentication via shared secret
     digest: 5c8757215dffa149f487a81d9a9bc413d5429ad5a56c21338880a6b28d0dbd25
     maintainers:
@@ -19,7 +19,7 @@ entries:
   jupyterhub:
   - apiVersion: v1
     appVersion: "1"
-    created: "2021-01-26T16:59:22.5125145+01:00"
+    created: "2021-01-26T17:20:49.9477305+01:00"
     description: A Helm chart for the deployment of multi-user JupyterHUB
     digest: bd8bd0f84a3d324c8bf319235ac650b076202829b3896ef96199bc34d37c55ac
     maintainers:
@@ -31,4 +31,4 @@ entries:
     urls:
     - https://ttedeschi.github.io/helm-charts/jupyterhub-1.tgz
     version: "1"
-generated: "2021-01-26T16:59:22.5075374+01:00"
+generated: "2021-01-26T17:20:49.9456498+01:00"
