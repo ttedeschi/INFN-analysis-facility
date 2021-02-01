@@ -2,7 +2,7 @@ FROM dciangot/dodas-iam-client-rec:test5 as REGISTRATION
 
 FROM jupyter/minimal-notebook:612aa5710bf9
 
-MAINTAINER Diego Ciangottini <diego.ciangottini@cern.ch>
+MAINTAINER Tommaso Tedeschi <tommaso.tedeschi@cern.ch>
 
 # callback = os.environ["OAUTH_CALLBACK_URL"]
 # iam_server = os.environ["OAUTH_ENDPOINT"]
