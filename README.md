@@ -47,7 +47,7 @@ Now you are good to go!
 
 ### Setup Jupyterhub
 
-Log into the cluster and add Dodas Helm charts to Helm repos
+Log into the cluster and add AF Helm charts to Helm repos
 ```
 helm repo add infnAF https://ttedeschi.github.io/INFN-analysis-facility/helm-charts
 helm repo update
