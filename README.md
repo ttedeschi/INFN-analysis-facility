@@ -70,11 +70,11 @@ helm repo add jetstack https://charts.jetstack.io
 helm repo update
 helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v1.1.0 --set installCRDs=true --kubeconfig /etc/kubernetes/admin.conf
 ```
-After substituting <k8s master public ip> with the real value inside ```helm-charts/jupyterhub/values.yaml```, create the htcondor deployment
+After substituting K8s master public IP inside ```helm-charts/htcondor/values.yaml```, create the htcondor deployment
 ```
 helm repo add infnAF https://ttedeschi.github.io/INFN-analysis-facility/helm-charts
 helm repo update
-helm install infnAF/jupyterhub --values helm-charts/jupyterhub/values.yaml --generate-name --kubeconfig /etc/kubernetes/admin.conf
+helm install infnAF/htcondor --values helm-charts/htcondor/values.yaml --generate-name --kubeconfig /etc/kubernetes/admin.conf
 ```
 HTCondor components use PASSWORD authentication method using a shared secret across the cluster.
 
