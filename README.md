@@ -49,20 +49,13 @@ Now you are good to go!
 
 Log into the cluster and add Dodas Helm charts to Helm repos
 ```
-helm repo add dodas https://dodas-ts.github.io/helm_charts
+helm repo add infnAF https://ttedeschi.github.io/INFN-analysis-facility/helm-charts
 helm repo update
 ```
-then subsitute in ```values/jupyterhub.yaml``` k8s master public IP and deploy Jupyterhub:
+then subsitute in ```helm-charts/jupyterhub/values.yaml``` k8s master public IP and deploy Jupyterhub:
 ```
-helm install  dodas/jupyterhub --values jupyterhub-value.yaml --generate-name --kubeconfig /etc/kubernetes/admin.conf
+helm install infnAF/jupyterhub --values helm-charts/jupyterhub/values.yaml --generate-name --kubeconfig /etc/kubernetes/admin.conf
 ```
-Then, set up CMS-IAM authentication
-```
-kubectl edit deployment hub
-```
-and substitute infn-cloud website with ```https://cms-auth.web.cern.ch/```
-
-This way the Jupyterhub uses CMS-IAM authentication to give access to a newly created jupyter notebook instance.
 
 ### Setup htcondor
 
@@ -77,9 +70,11 @@ helm repo add jetstack https://charts.jetstack.io
 helm repo update
 helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v1.1.0 --set installCRDs=true --kubeconfig /etc/kubernetes/admin.conf
 ```
-After substituting <k8s master public ip> with the real value inside ```k8s_templates/htcondor.yaml```, create the htcondor deployment
+After substituting <k8s master public ip> with the real value inside ```helm-charts/jupyterhub/values.yaml```, create the htcondor deployment
 ```
-kubectl apply -f k8s_templates/htcondor.yaml
+helm repo add infnAF https://ttedeschi.github.io/INFN-analysis-facility/helm-charts
+helm repo update
+helm install infnAF/jupyterhub --values helm-charts/jupyterhub/values.yaml --generate-name --kubeconfig /etc/kubernetes/admin.conf
 ```
 HTCondor components use PASSWORD authentication method using a shared secret across the cluster.
 
