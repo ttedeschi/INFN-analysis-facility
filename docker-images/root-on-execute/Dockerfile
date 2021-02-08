@@ -10,7 +10,8 @@ RUN yum install -y git cmake3 gcc-c++ gcc binutils libX11-devel libXpm-devel lib
 RUN mkdir /root/root6 
 WORKDIR /root/root6
 #COPY ./root_6.22.0_davix_patched /root/root6/root_source
-RUN git clone https://github.com/ttedeschi/root.git -b v6-22-00-patches /root/root6/root_source
+#RUN git clone https://github.com/ttedeschi/root.git -b v6-22-00-patches /root/root6/root_source
+RUN git clone https://github.com/oshadura/root.git -b bearer-tokens /root/root6/root_source
 RUN cmake3 -Dbuiltin_davix=ON /root/root6/root_source
 RUN cmake3 --build . --target install -j4
 WORKDIR /root
