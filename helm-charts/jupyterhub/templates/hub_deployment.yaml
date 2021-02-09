@@ -33,4 +33,4 @@ spec:
           ports:
           - containerPort: 8888
       nodeSelector:
-        condor: .Values.hub.nodeLabel 
+        condor: "{{ .Values.hub.nodeLabel }}" 
