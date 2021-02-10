@@ -32,3 +32,5 @@ spec:
           image: "{{ .Values.hub.image }}"
           ports:
           - containerPort: 8888
+      nodeSelector:
+        condor: .Values.hub.nodeLabel 
