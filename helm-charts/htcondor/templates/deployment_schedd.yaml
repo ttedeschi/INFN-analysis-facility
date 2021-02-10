@@ -27,8 +27,8 @@ spec:
       - name: schedd
         resources:
           requests:
-            memory: resources.requestsSchedd.memory
-            cpu: resources.requestsSchedd.cpu
+            memory: {{ .Values.resourcesSchedd.requests.memory }}
+            cpu: {{ .Values.resourcesSchedd.requests.cpu }}
         imagePullPolicy: {{ .Values.imageSchedd.pullPolicy }}
         securityContext:
           capabilities:
