@@ -9,7 +9,7 @@ hub:
     port: 30888
     image: dodasts/jupyter-hub:v3.0.1
     host: 212.189.205.185 
-    nodeSelector: condor=ccb
+    nodeLabel: ccb
 
 s3:
     endpoint: https://minio.cloud.infn.it/minio
