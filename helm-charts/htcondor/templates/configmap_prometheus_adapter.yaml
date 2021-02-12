@@ -4,7 +4,7 @@ metadata:
   name: prometheus-adapter-example-cm
   namespace: {{ .Values.namespace }}
 data:
-  prometheus-adapter.yml: | 
+  prometheus_adapter.yml: | 
     rules:
       - seriesQuery: 'condor_slot_activity_busy'        
         resources:

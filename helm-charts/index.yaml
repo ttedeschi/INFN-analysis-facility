@@ -3,9 +3,9 @@ entries:
   htcondor:
   - apiVersion: v1
     appVersion: 8.8.9
-    created: "2021-02-12T17:05:31.7318764+01:00"
+    created: "2021-02-12T17:12:26.0346257+01:00"
     description: A Helm chart for the deployment of HTCondor with PASSWORD authentication via shared secret
-    digest: 56bbe253336e6080cc326cd3d1785924c5d95e64afb5fa8272c3487aabe20e25
+    digest: 686c495a8a75aca96c96aa8ea8d53d37c526c695b668e21a427c3f531ccc93e3
     maintainers:
     - email: tommaso.tedeschi@pg.infn.it
       name: ttedesch
@@ -18,9 +18,9 @@ entries:
   jupyterhub:
   - apiVersion: v1
     appVersion: 1.0.0
-    created: "2021-02-12T17:05:31.7326633+01:00"
+    created: "2021-02-12T17:12:26.0353049+01:00"
     description: A Helm chart for the deployment of multi-user JupyterHUB
-    digest: b999915327967ea07da0ca74cd8606d98c0b7ba98fd4065f019df97178bf255e
+    digest: 223b1b0148acdf65de3a581e3661db358bd00d940da38f752b29a7ddcbed9dd4
     maintainers:
     - email: tommaso.tedeschi@pg.infn.it
       name: ttedesch
@@ -30,4 +30,4 @@ entries:
     urls:
     - https://ttedeschi.github.io/INFN-analysis-facility/helm-charts/jupyterhub-1.0.0.tgz
     version: 1.0.0
-generated: "2021-02-12T17:05:31.7304358+01:00"
+generated: "2021-02-12T17:12:26.0330796+01:00"
