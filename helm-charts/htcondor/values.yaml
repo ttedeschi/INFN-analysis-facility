@@ -9,27 +9,34 @@ namespace: condor
 
 imageCcb:
   repository: htcondor/cm
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "8.9.9-el7"
 
 imageSchedd:
   repository: htcondor/submit
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "8.9.9-el7"
 
 imageWn:
   repository: ttedesch/htcondor-execute
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "root6.22-davix-permission"
+  #tag: "root6.22-davix-permission"
+  tag: "root-tokensv2"
 
 imageClient:
   repository: htcondor/execute
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "8.9.9-el7"
+
+imageExporter:
+  repository: ttedesch/htcondor-exporter
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "v2"
 
 serviceCcb:
   port: 30618

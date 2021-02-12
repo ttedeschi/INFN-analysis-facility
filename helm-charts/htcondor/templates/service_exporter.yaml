@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: htcondor-exporter-svc
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: htcondor-exporter
+spec:
+  type: NodePort
+  ports:
+  - port: 9118
+    protocol: TCP
+    targetPort: 9118
+  selector:
+    app: htcondor-exporter
