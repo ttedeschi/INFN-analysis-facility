@@ -4,19 +4,8 @@ metadata:
   name: prometheus-example-cm
   namespace: {{ .Values.namespace }}
 data:
-  prometheus.yml: |
-  global:
-    scrape_interval: 10s
-    evaluation_interval: 10s
-
-  scrape_configs:
-    - job_name: 'htcondor-pod'
-      kubernetes_sd_configs:
-      - role: pod
-      relabel_configs:
-      - source_labels: [__meta_kubernetes_pod_label_app]
-        action: keep
-        regex: htcondor-exporter
-      - source_labels: [__meta_kubernetes_namespace]
-        action: replace
-        target_label: kubernetes_namespace
+  prometheus.yml: "  \nglobal:\n  scrape_interval: 10s\n  evaluation_interval: 10s\n\nscrape_configs:\n
+    \ - job_name: 'htcondor-pod'\n    kubernetes_sd_configs:\n    - role: pod\n    relabel_configs:\n
+    \   - source_labels: [__meta_kubernetes_pod_label_app]\n      action: keep\n      regex:
+    htcondor-exporter\n    - source_labels: [__meta_kubernetes_namespace]\n      action:
+    replace\n      target_label: kubernetes_namespace\n"
