@@ -34,8 +34,7 @@ spec:
           value: /etc/pwd/pool_password
         ports:
         - containerPort: 9118
-        #command: ["python3", "/root/CondorExporter.py"]
-        command: ["python3", "/root/htcondor-monitor/exporter/exporter/CondorExporter.py"]
+        command: ["python3", "/root/CondorExporter.py"]
         volumeMounts:
           - name: clustersecret
             mountPath: /etc/pwd
