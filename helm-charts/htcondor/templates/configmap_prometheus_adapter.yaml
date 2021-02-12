@@ -4,6 +4,6 @@ metadata:
   name: prometheus-adapter-example-cm
   namespace: {{ .Values.namespace }}
 data:
-  prometheus-adapter.yml: "rules:\n  - seriesQuery: 'condor_slot_activity_busy'        \n
+  "rules:\n  - seriesQuery: 'condor_slot_activity_busy'        \n
     \   resources:\n      template: \"<<.Resource>>\"\n    name:\n      matches: \"^(.*)\"\n
     \     as: \"${1}\"\n    metricsQuery: 'avg(<<.Series>>) by (job)' \n"
