@@ -8,4 +8,4 @@ helm repo update
 helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v1.1.0 --set installCRDs=true --kubeconfig /etc/kubernetes/admin.conf
 helm repo add infnAF https://ttedeschi.github.io/INFN-analysis-facility/helm-charts
 helm repo update
-helm install condor infnAF/htcondor --set masterPublicIp=$1 --set namespace=default --kubeconfig /etc/kubernetes/admin.conf
+helm install condor infnAF/htcondor --set masterPublicIp=$1 --set namespace=default --set autoscaling.enabled=true --kubeconfig /etc/kubernetes/admin.conf
