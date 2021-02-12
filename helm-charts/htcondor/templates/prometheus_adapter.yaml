@@ -171,7 +171,7 @@ spec:
         - --secure-port=6443
         - --cert-dir=/tmp/cert
         - --logtostderr=true
-        - --prometheus-url=http://prometheus-service.monitoring.svc:8080/
+        - --prometheus-url=http://prometheus-service.{{ .Values.namespace }}.svc:8080/
         - --metrics-relist-interval=1m
         - --v=6
         - --config=/etc/adapter/prometheus_adapter.yml
