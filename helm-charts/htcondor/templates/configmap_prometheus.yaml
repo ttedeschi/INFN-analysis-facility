@@ -4,6 +4,7 @@ metadata:
   name: prometheus-example-cm
   namespace: {{ .Values.namespace }}
 data:
+  prometheus.yml: | 
   "  \nglobal:\n  scrape_interval: 10s\n  evaluation_interval: 10s\n\nscrape_configs:\n
     \ - job_name: 'htcondor-pod'\n    kubernetes_sd_configs:\n    - role: pod\n    relabel_configs:\n
     \   - source_labels: [__meta_kubernetes_pod_label_app]\n      action: keep\n      regex:
