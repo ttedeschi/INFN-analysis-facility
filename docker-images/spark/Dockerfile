@@ -13,9 +13,9 @@ RUN sudo apt-get update && sudo apt-get install -y dpkg-dev apt-utils cmake g++ 
 
 # set up root
 RUN mkdir /root/root6
-#WORKDIR /root/root6
+WORKDIR /root/root6
 WORKDIR /root/
-#WORKDIR /root/root6
+WORKDIR /root/root6
 #COPY ./root_6.22.0_davix_patched /root/root6/root_source
 RUN git clone https://github.com/oshadura/root.git -b bearer-tokens /root/root6/root_source
 RUN cmake -Dbuiltin_davix=ON /root/root6/root_source
@@ -41,11 +41,14 @@ RUN pip install uproot scikit-learn pandas seaborn
 RUN wget https://research.cs.wisc.edu/htcondor/tarball/current/8.9.9/release/condor-8.9.9-x86_64_Ubuntu20-unstripped.tar.gz
 RUN tar -xzvf condor-8.9.9-x86_64_Ubuntu20-unstripped.tar.gz
 RUN sudo mv condor-8.9.9-x86_64_Ubuntu20-unstripped/bin/* /usr/bin/
-RUN sudo mv condor-8.9.9-x86_64_Ubuntu20-unstripped/lib/* /usr/lib/
+RUN sudo mkdir /usr/lib/condor
 RUN sudo mv condor-8.9.9-x86_64_Ubuntu20-unstripped/lib/condor/* /usr/lib/condor/
 RUN sudo mv condor-8.9.9-x86_64_Ubuntu20-unstripped/lib/python3/* /usr/lib/python3/
+RUN sudo rm -r condor-8.9.9-x86_64_Ubuntu20-unstripped/lib/condor condor-8.9.9-x86_64_Ubuntu20-unstripped/lib/python3
+RUN sudo mv condor-8.9.9-x86_64_Ubuntu20-unstripped/lib/* /usr/lib/
 RUN sudo mv condor-8.9.9-x86_64_Ubuntu20-unstripped/libexec/* /usr/libexec/
-
+RUN sudo mkdir /etc/condor
+COPY ./condor_config /etc/condor/condor_config
 
 #CMD ["/bin/bash", "-x", "/start.sh"]
 USER jovyan
