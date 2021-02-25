@@ -20,10 +20,10 @@ WORKDIR /root/root6
 RUN git clone https://github.com/oshadura/root.git -b bearer-tokens /root/root6/root_source
 RUN cmake -Dbuiltin_davix=ON /root/root6/root_source
 RUN cmake --build . --target install -j4
-
-# set up NanoAOD-tools
 WORKDIR /root
 RUN rm -r -f root6
+
+# set up NanoAOD-tools
 RUN git clone https://github.com/cms-nanoAOD/nanoAOD-tools.git /usr/local/bin/NanoAODTools
 RUN chmod -R 777 /usr/local/bin/NanoAODTools
 ENV PYTHONPATH=/usr/local/lib
@@ -49,6 +49,9 @@ RUN sudo mv condor-8.9.9-x86_64_Ubuntu20-unstripped/lib/* /usr/lib/
 RUN sudo mv condor-8.9.9-x86_64_Ubuntu20-unstripped/libexec/* /usr/libexec/
 RUN sudo mkdir /etc/condor
 COPY ./condor_config /etc/condor/condor_config
+
+# disable CA check for davix root
+RUN echo "Davix.GSI.CACheck: n" >> /usr/local/etc/system.rootrc 
 
 #CMD ["/bin/bash", "-x", "/start.sh"]
 USER jovyan

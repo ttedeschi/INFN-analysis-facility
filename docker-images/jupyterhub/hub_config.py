@@ -84,7 +84,8 @@ c.JupyterHub.spawner_class = 'kubespawner.KubeSpawner'
 c.KubeSpawner.cmd = ['jupyterhub-singleuser', '--allow-root']
 #c.KubeSpawner.image = 'ttedesch/jupyter-minimal:root-tokens-v2'
 
-c.KubeSpawner.image = 'ttedesch/spark:root-tokens-v2'
+c.KubeSpawner.image = 'ttedesch/spark:root-tokens-condor'
+#c.KubeSpawner.image = 'ttedesch/spark:root-tokens-v2'
 #c.KubeSpawner.image = 'ttedesch/spark:root-tokens'
 #c.KubeSpawner.image = 'ttedesch/spark:root6.22-davix-permission'
 #c.KubeSpawner.image = 'dodasts/spark:v3.0.1'
