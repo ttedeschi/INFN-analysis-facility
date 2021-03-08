@@ -32,6 +32,8 @@ RUN echo 'source /usr/local/bin/NanoAODTools/standalone/env_standalone.sh' >> /e
 RUN echo 'source /usr/local/bin/thisroot.sh' >> /etc/profile.d/nanoaodtools.sh
 RUN chmod -R 777 /usr/local/bin/NanoAODTools
 
+RUN pip3 install dask dask_jobqueue
+
 ENV PYTHONPATH=/usr/local/lib
 ENV LD_LIBRARY_PATH=/usr/local/lib
 
